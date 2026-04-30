@@ -1,0 +1,34 @@
+{
+  "name": "@duet/use-cases",
+  "version": "0.1.0",
+  "description": "Canonical list of Duet use cases — single source of truth for the home tab, marketing site, onboarding, and docs.",
+  "license": "UNLICENSED",
+  "private": false,
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aomni-com/duet-use-cases.git"
+  }
+}
