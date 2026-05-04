@@ -1,0 +1,39 @@
+{
+  "name": "@duet/skills",
+  "version": "0.1.0",
+  "description": "Curated registry of Duet capabilities (skills) and the surfaces that promote them (use cases).",
+  "type": "module",
+  "license": "UNLICENSED",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aomni-com/duet-skills.git"
+  },
+  "files": [
+    "dist",
+    "skills"
+  ],
+  "exports": {
+    "./use-cases": {
+      "types": "./dist/use-cases.d.ts",
+      "import": "./dist/use-cases.js"
+    },
+    "./runtime": {
+      "types": "./dist/runtime.d.ts",
+      "import": "./dist/runtime.js"
+    }
+  },
+  "scripts": {
+    "build:registry": "bun run scripts/build-registry.ts",
+    "build": "bun run build:registry && tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "validate": "bun run build:registry && bun run typecheck"
+  },
+  "dependencies": {
+    "gray-matter": "^4.0.3"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.0",
+    "@types/node": "^22.0.0"
+  }
+}
