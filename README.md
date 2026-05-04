@@ -38,14 +38,14 @@ This split keeps web bundles clean — prompt bodies never reach the browser.
 
 ```yaml
 ---
-id: deep-research
-name: Deep Research
-description: Multi-source research with citations.
+id: outbound-campaign
+name: Outbound Campaign
+description: Run a full outbound campaign — define ICP, build a lead list, personalize a sequence, send, and triage replies.
 model: claude-opus-4-7
-tools: [web-search, browse, cite]
+tools: [enrich, web-search, firecrawl, integrations, file-write]
 ---
 
-You are a research agent. When given a query…
+You are an outbound campaign agent. You run the loop end-to-end…
 ```
 
 Required: `id`, `name`, `description`. Optional: `model`, `tools`.
@@ -79,13 +79,15 @@ Edit `src/use-cases.ts`. Use cases are pure data:
 
 ```ts
 {
-  id: 'deep-research-home',
-  skillId: 'deep-research',
-  title: 'Deep research',
-  shortLabel: 'Research',
-  icon: 'magnifying-glass',
-  promptTemplate: 'Do deep research on: {input}',
+  id: 'outbound-campaign-home',
+  skillId: 'outbound-campaign',
+  title: 'Run an outbound campaign',
+  shortLabel: 'Outbound',
+  icon: 'paper-plane-tilt',
+  promptTemplate: 'Run an outbound campaign for: {input}',
   surfaces: ['home', 'desktop'],
   order: 2,
 }
 ```
+
+The same skill can appear with multiple framings — see `outbound-campaign-home` and `outbound-campaign-reactivate` in `src/use-cases.ts` for the canonical example.
