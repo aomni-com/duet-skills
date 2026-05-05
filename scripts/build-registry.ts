@@ -107,9 +107,9 @@ function loadKnownExternalIds(): Set<string> {
 }
 
 function assertUseCaseSkillIdsResolve(skills: ParsedSkill[]): void {
-  // Best-effort static check: scan use-cases.ts for skillId: 'X' literals
-  // and confirm each X is either a local skill or a known external (default)
-  // skill id. Misses dynamic refs; that's OK — this is defense-in-depth.
+  // Best-effort static check: scan use-cases.ts for primarySkillId / supporting
+  // skill id literals and confirm each is either a local skill or a known
+  // external (default) skill id. Misses dynamic refs; defense-in-depth only.
   let raw: string
   try {
     raw = readFileSync(USE_CASES_FILE, 'utf8')
@@ -118,14 +118,26 @@ function assertUseCaseSkillIdsResolve(skills: ParsedSkill[]): void {
   }
   const local = new Set(skills.map((s) => s.id))
   const external = loadKnownExternalIds()
-  const re = /skillId:\s*['"]([^'"]+)['"]/g
   const referenced = new Set<string>()
+
+  // primarySkillId: 'X'
+  const primaryRe = /primarySkillId:\s*['"]([^'"]+)['"]/g
   let m: RegExpExecArray | null
-  while ((m = re.exec(raw))) referenced.add(m[1]!)
+  while ((m = primaryRe.exec(raw))) referenced.add(m[1]!)
+
+  // supportingSkillIds: ['X', 'Y'] — extract everything inside the brackets
+  const supportingRe = /supportingSkillIds:\s*\[([^\]]*)\]/g
+  while ((m = supportingRe.exec(raw))) {
+    const block = m[1]!
+    const idRe = /'([^']+)'|"([^"]+)"/g
+    let idMatch: RegExpExecArray | null
+    while ((idMatch = idRe.exec(block))) referenced.add((idMatch[1] ?? idMatch[2])!)
+  }
+
   const unknown = [...referenced].filter((r) => !local.has(r) && !external.has(r))
   if (unknown.length > 0) {
     throw new Error(
-      `use-cases.ts references unknown skillId(s): ${unknown.join(', ')}. ` +
+      `use-cases.ts references unknown skill id(s): ${unknown.join(', ')}. ` +
         `Known local ids: ${[...local].join(', ')}. ` +
         `Known external (default) ids: ${[...external].join(', ')}. ` +
         `If this is a new chat-app default skill, add it to src/external-skills.ts.`,
