@@ -40,20 +40,20 @@ export declare const CATEGORY_LABELS: Record<UseCaseCategory, string>;
 /** A node in the source → duet → output workflow diagram. */
 export interface UseCaseNode {
     /** Short label shown under the node. */
-    readonly label: string;
+    label: string;
     /** Phosphor icon name (kebab-case). Resolved to a component by the consumer. */
-    readonly icon: string;
+    icon: string;
     /** Visual tone the surface uses to style the node. */
-    readonly tone: 'source' | 'duet' | 'output';
+    tone: 'source' | 'duet' | 'output';
     /** Optional Composio toolkit slug — when set, surfaces show the brand icon. */
-    readonly brandSlug?: string;
+    brandSlug?: string;
 }
 /** Composio toolkit prerequisite for a use case. */
 export interface ToolkitRequirement {
     /** Composio toolkit slug (lowercase). Matches `slug` from listConnectedToolkits. */
-    readonly slug: string;
+    slug: string;
     /** Human-readable label shown when the toolkit is missing. */
-    readonly label: string;
+    label: string;
 }
 /**
  * A use case is a placement of a skill on a surface, plus the rich metadata
@@ -64,44 +64,44 @@ export interface ToolkitRequirement {
  */
 export interface UseCase {
     /** Unique id for this use case. */
-    readonly id: string;
+    id: string;
     /** Category bucket — drives grouping and persona-based ordering. */
-    readonly category: UseCaseCategory;
+    category: UseCaseCategory;
     /** Title rendered on the surface. */
-    readonly title: string;
+    title: string;
     /** One-line subtitle shown under the title in cards / dialog. */
-    readonly subtitle: string;
+    subtitle: string;
     /** Optional shorter label for compact surfaces (chips, mobile). */
-    readonly shortLabel?: string;
+    shortLabel?: string;
     /** Optional Phosphor icon name override for the preview card. */
-    readonly cardIcon?: string;
+    cardIcon?: string;
     /** Diagram nodes: source → duet → output. Always exactly 3. */
-    readonly nodes: readonly [UseCaseNode, UseCaseNode, UseCaseNode];
+    nodes: [UseCaseNode, UseCaseNode, UseCaseNode];
     /** What kind of artifact Duet ends up building — surfaces as a badge. */
-    readonly deliverable: UseCaseDeliverable;
+    deliverable: UseCaseDeliverable;
     /** Toolkits that must be connected before the use case can run end-to-end. */
-    readonly requiredToolkits: readonly ToolkitRequirement[];
+    requiredToolkits: ToolkitRequirement[];
     /** Concrete bullets shown in the details view. */
-    readonly whatYoullGet: readonly string[];
+    whatYoullGet: string[];
     /** Preview of the questions Duet will ask first. Sets expectations. */
-    readonly whatIllAsk: readonly string[];
+    whatIllAsk: string[];
     /** Detailed prompt sent to Duet on launch. Should be explicit about deliverable. */
-    readonly seedPrompt: string;
+    seedPrompt: string;
     /**
      * The skill the runtime should preference for this use case. Resolves to
      * either a local skill (`SKILL_METADATA`) or a chat-app default skill
      * (`KNOWN_DEFAULT_SKILL_IDS`). Required.
      */
-    readonly primarySkillId: string;
+    primarySkillId: string;
     /**
      * Additional skills the use case can engage. Optional. Same resolution rules
      * as `primarySkillId`. The runtime advertises these as additional context.
      */
-    readonly supportingSkillIds?: readonly string[];
+    supportingSkillIds?: string[];
     /** Where this use case appears. */
-    readonly surfaces: readonly Surface[];
+    surfaces: Surface[];
     /** Sort order within a surface (ascending). */
-    readonly order?: number;
+    order?: number;
 }
 /**
  * Compile-time guard: a UseCase must NOT carry these fields. If you ever see a
