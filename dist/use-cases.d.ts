@@ -38,4 +38,5 @@ export declare function getAllSkillIdsForUseCase(useCase: UseCase): readonly str
  * remaining use cases grouped by their categories in a sensible order.
  */
 export declare function getOrderedUseCases(preferredCategory: UseCaseCategory): readonly UseCase[];
+export declare function resolveUseCaseCategoryFromRole(signal: string | undefined | null): UseCaseCategory;
 //# sourceMappingURL=use-cases.d.ts.map

@@ -952,4 +952,44 @@ export function getOrderedUseCases(preferredCategory) {
     ];
     return order.flatMap((cat) => USE_CASES.filter((u) => u.category === cat));
 }
+/**
+ * Map a free-form user-role signal (department, job title, "what do you do?"
+ * answer) to the UseCaseCategory that's most relevant. Owned here because
+ * categories are part of the registry contract — keeping the role→category
+ * mapping next to the categories means consumers don't drift.
+ *
+ * Falls back to 'internal-tools' when nothing matches, since builders and
+ * generalists are the broadest audience for the tools-and-apps category.
+ */
+const ROLE_KEYWORD_PATTERNS = [
+    {
+        pattern: /\b(eng|engineer|developer|dev|software|backend|frontend|platform|infra|sre|devops)\b/i,
+        category: 'engineering',
+    },
+    {
+        pattern: /\b(growth|gtm|demand|outbound|lead gen|marketing ops|sdr|bdr)\b/i,
+        category: 'growth',
+    },
+    {
+        pattern: /\b(content|marketing|brand|comms|creative|copy|editorial|social)\b/i,
+        category: 'content',
+    },
+    { pattern: /\b(sales|account|customer success|cs|csm|support)\b/i, category: 'sales' },
+    { pattern: /\b(ops|operations|finance|legal|people|hr)\b/i, category: 'operations' },
+    { pattern: /\b(research|strategy|analyst|insight)\b/i, category: 'research' },
+    {
+        pattern: /\b(founder|ceo|cofounder|owner|president|product|pm|design|ux)\b/i,
+        category: 'internal-tools',
+    },
+    { pattern: /\b(assistant|ea|chief of staff|cos)\b/i, category: 'personal' },
+];
+export function resolveUseCaseCategoryFromRole(signal) {
+    if (!signal)
+        return 'internal-tools';
+    for (const { pattern, category } of ROLE_KEYWORD_PATTERNS) {
+        if (pattern.test(signal))
+            return category;
+    }
+    return 'internal-tools';
+}
 //# sourceMappingURL=use-cases.js.map
