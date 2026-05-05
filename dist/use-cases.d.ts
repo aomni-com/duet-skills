@@ -1,5 +1,5 @@
 /**
- * @duet/skills/use-cases
+ * @aomni-com/duet-skills/use-cases
  *
  * Metadata-only view of skills + the curated list of surface placements.
  * Safe to import from the web — prompt bodies are stripped.
@@ -32,9 +32,8 @@ export declare const SKILL_METADATA: readonly SkillMetadata[];
  * - Every `skillId` references either a local or external known id.
  * - No behavior overrides — see `ForbiddenOnUseCase` in types.ts.
  *
- * The `deep-research` skill below appears twice with different framings —
- * that's the "one skill, two surfaces" pattern. The skill is unchanged;
- * only the title, label, and prompt template differ.
+ * Icon names follow Phosphor's kebab-case convention. Consumers map them
+ * to icon components via a small resolver.
  */
 export declare const USE_CASES: readonly UseCase[];
 /** Look up use cases by surface. Returns them sorted by `order` then array position. */
