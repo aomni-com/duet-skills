@@ -1,0 +1,18 @@
+/**
+ * @duet/skills/runtime
+ *
+ * Full registry including each skill's prompt body. Imported by the sandbox
+ * at boot. Do NOT import this from the web — use `@duet/skills/use-cases`
+ * for browser-safe metadata.
+ */
+import type { Skill } from './types.js';
+import { SKILLS } from './generated.js';
+export type { Skill, SkillMetadata, UseCase, Surface, ForbiddenOnUseCase } from './types.js';
+export { SKILLS };
+/** Look up a skill by id. Returns undefined if not found. */
+export declare function getSkill(id: string): Skill | undefined;
+/** Returns true if a skill with the given id exists. */
+export declare function hasSkill(id: string): boolean;
+/** All registered skill ids, useful for validation and diagnostics. */
+export declare const SKILL_IDS: readonly string[];
+//# sourceMappingURL=runtime.d.ts.map
