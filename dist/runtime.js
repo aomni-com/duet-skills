@@ -6,6 +6,7 @@
  * for browser-safe metadata.
  */
 import { SKILLS } from './generated.js';
+export { KNOWN_DEFAULT_SKILL_IDS, isKnownDefaultSkillId } from './external-skills.js';
 export { SKILLS };
 /** Look up a skill by id. Returns undefined if not found. */
 export function getSkill(id) {

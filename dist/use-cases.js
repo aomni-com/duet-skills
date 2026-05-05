@@ -5,6 +5,7 @@
  * Safe to import from the web — prompt bodies are stripped.
  */
 import { SKILLS } from './generated.js';
+export { KNOWN_DEFAULT_SKILL_IDS, isKnownDefaultSkillId } from './external-skills.js';
 /** Strip prompt bodies. The result is browser-safe. */
 const stripBody = (s) => {
     const { body: _body, ...rest } = s;
@@ -15,13 +16,28 @@ export const SKILL_METADATA = SKILLS.map(stripBody);
  * The curated list of use cases. Order within a surface is determined by
  * `order` (ascending), then by array position.
  *
+ * Use cases can reference TWO kinds of skills:
+ *
+ *   - **Local skills** — authored in this repo under `skills/<id>/SKILL.md`.
+ *     Shipped via `@aomni-com/duet-skills` and listed in `SKILL_METADATA`.
+ *   - **External default skills** — authored in chat-app under
+ *     `packages/backend/registry/sandbox/default-skills/<id>/SKILL.md`.
+ *     Always present in the sandbox at boot, regardless of whether this
+ *     package is installed. Their ids are listed in
+ *     `KNOWN_DEFAULT_SKILL_IDS`.
+ *
+ * Both are valid `skillId` targets. The build script validates every
+ * `skillId` resolves to one set or the other; consumers (the web) resolve
+ * metadata for local ids via `SKILL_METADATA` and for external ids via the
+ * chat-app default-skills metadata.
+ *
  * Invariants enforced at build time:
- * - Every `skillId` references a real Skill.id (build-registry checks this).
+ * - Every `skillId` references either a local or external known id.
  * - No behavior overrides — see `ForbiddenOnUseCase` in types.ts.
  *
- * Note the `outbound-campaign` skill below appears twice with different
- * framings — that's the "one skill, two surfaces" pattern. The skill is
- * unchanged; only the title, label, and prompt template differ.
+ * The `deep-research` skill below appears twice with different framings —
+ * that's the "one skill, two surfaces" pattern. The skill is unchanged;
+ * only the title, label, and prompt template differ.
  */
 export const USE_CASES = [
     // Research
@@ -169,6 +185,37 @@ export const USE_CASES = [
         surfaces: ['home', 'desktop'],
         order: 12,
     },
+    // External (chat-app default skills) — demonstrate the cross-repo pattern
+    {
+        id: 'firecrawl-home',
+        skillId: 'firecrawl',
+        title: 'Scrape a webpage',
+        shortLabel: 'Scrape',
+        icon: 'globe',
+        promptTemplate: 'Scrape this URL and return clean markdown: {input}',
+        surfaces: ['home', 'desktop'],
+        order: 14,
+    },
+    {
+        id: 'pdf-extract-home',
+        skillId: 'pdf',
+        title: 'Extract from a PDF',
+        shortLabel: 'PDF extract',
+        icon: 'file-pdf',
+        promptTemplate: 'Extract the text and tables from the attached PDF.',
+        surfaces: ['home', 'desktop'],
+        order: 15,
+    },
+    {
+        id: 'file-conversion-home',
+        skillId: 'file-conversion',
+        title: 'Convert a file',
+        shortLabel: 'Convert',
+        icon: 'arrows-clockwise',
+        promptTemplate: 'Convert the attached file to: {input}',
+        surfaces: ['home', 'desktop'],
+        order: 16,
+    },
     // Personal / team
     {
         id: 'meeting-notes-to-actions-home',
@@ -189,7 +236,13 @@ export function getUseCasesForSurface(surface) {
         return ao - bo;
     });
 }
-/** Look up the skill metadata referenced by a use case. */
+/**
+ * Look up the skill metadata referenced by a use case **from this package**.
+ *
+ * Returns `undefined` if the `skillId` references an external default skill
+ * (one of `KNOWN_DEFAULT_SKILL_IDS`). The caller is responsible for
+ * resolving external ids against chat-app's default-skill metadata.
+ */
 export function getSkillForUseCase(useCase) {
     return SKILL_METADATA.find((s) => s.id === useCase.skillId);
 }

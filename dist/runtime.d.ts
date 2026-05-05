@@ -8,6 +8,8 @@
 import type { Skill } from './types.js';
 import { SKILLS } from './generated.js';
 export type { Skill, SkillMetadata, UseCase, Surface, ForbiddenOnUseCase } from './types.js';
+export { KNOWN_DEFAULT_SKILL_IDS, isKnownDefaultSkillId } from './external-skills.js';
+export type { KnownDefaultSkillId } from './external-skills.js';
 export { SKILLS };
 /** Look up a skill by id. Returns undefined if not found. */
 export declare function getSkill(id: string): Skill | undefined;

@@ -1,6 +1,6 @@
-# @duet/skills
+# @aomni-com/duet-skills
 
-Curated registry of Duet capabilities and the surfaces that promote them.
+Curated registry of Duet skills (industry/use-case-specific capabilities) and the surfaces that promote them.
 
 ## Two concepts
 
@@ -8,6 +8,19 @@ Curated registry of Duet capabilities and the surfaces that promote them.
 - **Use case** — a surface placement that points at a skill (`src/use-cases.ts`). Owned by the web; ships with title, label, icon, prompt template, surfaces, and order. **Use cases never override skill behavior.**
 
 A single skill can power multiple use cases. The `skillId` field is the contract — folder names equal the id by convention, but consumers reference the id, not the path.
+
+## What lives where
+
+Two repos host skills, both queryable by id from the same `UseCase.skillId`:
+
+| Repo                            | What                                                                                  | Loaded                                          |
+| ------------------------------- | ------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| `chat-app/.../default-skills/`  | **Default skills** — primitives every sandbox boots with (firecrawl, pdf, cron, etc.) | Always; embedded in the sandbox image           |
+| `aomni-com/duet-skills` (this)  | **Industry / use-case-specific skills** — workflows that compose primitives           | Via `@aomni-com/duet-skills` package            |
+
+Use cases in this repo can reference **either** kind of skill by id. The list of valid external ids lives in `src/external-skills.ts` and is the contract chat-app's default-skills directory commits to.
+
+When a default skill is added, removed, or renamed in chat-app, update `src/external-skills.ts` in the same PR.
 
 ## Repo layout
 
@@ -29,10 +42,10 @@ duet-skills/
 
 ## Two entrypoints
 
-- `@duet/skills/runtime` — full registry including each skill's prompt body. Imported by the sandbox at boot.
-- `@duet/skills/use-cases` — metadata-only view (no prompt body) plus the use-case list. Imported by the web for tooltips, chips, and marketing.
+- `@aomni-com/duet-skills/runtime` — full registry including each skill's prompt body. Imported by the sandbox at boot.
+- `@aomni-com/duet-skills/use-cases` — metadata-only view (no prompt body) plus the use-case list. Imported by the web for tooltips, chips, and marketing.
 
-This split keeps web bundles clean — prompt bodies never reach the browser.
+This split keeps web bundles clean — prompt bodies never reach the browser. Both entrypoints also export `KNOWN_DEFAULT_SKILL_IDS` and `isKnownDefaultSkillId(id)` for cross-repo skill resolution.
 
 ## SKILL.md frontmatter
 
@@ -54,7 +67,7 @@ Required: `id`, `name`, `description`. Optional: `model`, `tools`.
 
 1. **Use cases cannot override skill behavior.** No `systemPrompt` / `tools` / `model` on `UseCase` — TypeScript prevents it. Otherwise a chip could promise behavior the skill doesn't deliver.
 2. **Use cases are pure curation.** They specify which skill, what to call it on this surface, what to prefill, where to render, in what order. No logic.
-3. **Every `UseCase.skillId` must reference a real `Skill.id`.** The build script verifies this.
+3. **Every `UseCase.skillId` must resolve.** Either to a local skill in this repo OR to a known default-skill id in `KNOWN_DEFAULT_SKILL_IDS`. The build script verifies this.
 4. **Never rename a skill `id`.** Only deprecate. Folder paths can be reorganized; ids cannot.
 
 ## Versioning

@@ -91,26 +91,44 @@ function discoverSkills(): ParsedSkill[] {
   return skills.sort((a, b) => a.id.localeCompare(b.id))
 }
 
+function loadKnownExternalIds(): Set<string> {
+  // Read external-skills.ts and pull the literal id list out. We don't
+  // import it because this is a build script and the source may not be
+  // built yet.
+  const file = join(ROOT, 'src', 'external-skills.ts')
+  const raw = readFileSync(file, 'utf8')
+  const re = /'([a-z0-9-]+)'/g
+  const ids = new Set<string>()
+  // Anchor parsing to the KNOWN_DEFAULT_SKILL_IDS array.
+  const block = raw.match(/KNOWN_DEFAULT_SKILL_IDS\s*=\s*\[([^\]]*)\]/s)?.[1] ?? ''
+  let m: RegExpExecArray | null
+  while ((m = re.exec(block))) ids.add(m[1]!)
+  return ids
+}
+
 function assertUseCaseSkillIdsResolve(skills: ParsedSkill[]): void {
   // Best-effort static check: scan use-cases.ts for skillId: 'X' literals
-  // and confirm each X matches a known skill id. Misses dynamic refs; that's
-  // OK — this is a defense-in-depth check, not the only one.
+  // and confirm each X is either a local skill or a known external (default)
+  // skill id. Misses dynamic refs; that's OK — this is defense-in-depth.
   let raw: string
   try {
     raw = readFileSync(USE_CASES_FILE, 'utf8')
   } catch {
     return
   }
-  const ids = new Set(skills.map((s) => s.id))
+  const local = new Set(skills.map((s) => s.id))
+  const external = loadKnownExternalIds()
   const re = /skillId:\s*['"]([^'"]+)['"]/g
   const referenced = new Set<string>()
   let m: RegExpExecArray | null
   while ((m = re.exec(raw))) referenced.add(m[1]!)
-  const unknown = [...referenced].filter((r) => !ids.has(r))
+  const unknown = [...referenced].filter((r) => !local.has(r) && !external.has(r))
   if (unknown.length > 0) {
     throw new Error(
       `use-cases.ts references unknown skillId(s): ${unknown.join(', ')}. ` +
-        `Known ids: ${[...ids].join(', ')}.`,
+        `Known local ids: ${[...local].join(', ')}. ` +
+        `Known external (default) ids: ${[...external].join(', ')}. ` +
+        `If this is a new chat-app default skill, add it to src/external-skills.ts.`,
     )
   }
 }
