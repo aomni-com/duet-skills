@@ -31,6 +31,28 @@ export const SKILL_METADATA: readonly SkillMetadata[] = SKILLS.map(stripBody)
  * unchanged; only the title, label, and prompt template differ.
  */
 export const USE_CASES: readonly UseCase[] = [
+  // Research
+  {
+    id: 'deep-research-home',
+    skillId: 'deep-research',
+    title: 'Deep research',
+    shortLabel: 'Research',
+    icon: 'magnifying-glass',
+    promptTemplate: 'Do deep research on: {input}',
+    surfaces: ['home', 'desktop'],
+    order: 0,
+  },
+  {
+    id: 'deep-research-company',
+    skillId: 'deep-research',
+    title: 'Research a company',
+    shortLabel: 'Company',
+    icon: 'building',
+    promptTemplate: 'Research the company {input} — products, customers, recent news, competitive landscape.',
+    surfaces: ['home'],
+    order: 0,
+  },
+
   // Sales & GTM
   {
     id: 'sales-meeting-prep-home',

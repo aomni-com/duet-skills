@@ -38,14 +38,14 @@ This split keeps web bundles clean — prompt bodies never reach the browser.
 
 ```yaml
 ---
-id: outbound-campaign
-name: Outbound Campaign
-description: Run a full outbound campaign — define ICP, build a lead list, personalize a sequence, send, and triage replies.
+id: deep-research
+name: Deep Research
+description: Multi-source research with citations.
 model: claude-opus-4-7
-tools: [enrich, web-search, firecrawl, integrations, file-write]
+tools: [web-search, firecrawl, file-write]
 ---
 
-You are an outbound campaign agent. You run the loop end-to-end…
+You are a research agent. When given a query…
 ```
 
 Required: `id`, `name`, `description`. Optional: `model`, `tools`.
