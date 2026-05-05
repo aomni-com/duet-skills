@@ -1,0 +1,41 @@
+name: Publish to GitHub Packages
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@aomni-com'
+
+      - run: bun install --frozen-lockfile
+
+      - run: bun run build
+
+      - name: Publish (skip if version unchanged)
+        run: |
+          set -e
+          PKG_NAME=$(node -p "require('./package.json').name")
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          if npm view "$PKG_NAME@$PKG_VERSION" --registry=https://npm.pkg.github.com > /dev/null 2>&1; then
+            echo "Version $PKG_VERSION already published — skipping."
+            exit 0
+          fi
+          npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
