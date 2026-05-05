@@ -18,7 +18,7 @@
  * lists move slowly enough that a 30-second manual edit is the right tool.
  *
  * Last synced against chat-app/packages/backend/registry/sandbox/default-skills
- * after PR #1211 (default-skills trim and split, merged 2026-05-04).
+ * after PR #1219 (impeccable installed as default skill, opened 2026-05-05).
  */
 
 export const KNOWN_DEFAULT_SKILL_IDS = [
@@ -37,6 +37,7 @@ export const KNOWN_DEFAULT_SKILL_IDS = [
   'firecrawl',
   'github',
   'go-to-market',
+  'impeccable',
   'media-creation',
   'pdf',
   'webhook-collector',

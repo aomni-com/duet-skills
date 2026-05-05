@@ -18,9 +18,9 @@
  * lists move slowly enough that a 30-second manual edit is the right tool.
  *
  * Last synced against chat-app/packages/backend/registry/sandbox/default-skills
- * after PR #1211 (default-skills trim and split, merged 2026-05-04).
+ * after PR #1219 (impeccable installed as default skill, opened 2026-05-05).
  */
-export declare const KNOWN_DEFAULT_SKILL_IDS: readonly ["add-skill", "ai-gateway", "branded-content", "build-apps", "composio-credentials", "create-skill", "crm", "cron", "duet", "env-vars", "file-conversion", "find-skills", "firecrawl", "github", "go-to-market", "media-creation", "pdf", "webhook-collector"];
+export declare const KNOWN_DEFAULT_SKILL_IDS: readonly ["add-skill", "ai-gateway", "branded-content", "build-apps", "composio-credentials", "create-skill", "crm", "cron", "duet", "env-vars", "file-conversion", "find-skills", "firecrawl", "github", "go-to-market", "impeccable", "media-creation", "pdf", "webhook-collector"];
 export type KnownDefaultSkillId = (typeof KNOWN_DEFAULT_SKILL_IDS)[number];
 /** True if the id is a recognized chat-app default skill. */
 export declare function isKnownDefaultSkillId(id: string): id is KnownDefaultSkillId;

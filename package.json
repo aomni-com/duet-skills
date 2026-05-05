@@ -1,6 +1,6 @@
 {
   "name": "@aomni-com/duet-skills",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Curated registry of Duet capabilities (skills) and the surfaces that promote them (use cases).",
   "type": "module",
   "license": "UNLICENSED",

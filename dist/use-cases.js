@@ -111,7 +111,7 @@ export const USE_CASES = [
         ],
         seedPrompt: 'Build a stack health dashboard as a hosted app. The app should pull from the systems I name (uptime, gateway spend, staging health), display them as panels with background refresh, and highlight anything past a threshold. Also post a heads-up into this channel when a threshold trips. Start by asking: which systems to monitor, the refresh cadence + thresholds, and where to send heads-ups. Then build and deploy it, and share the URL.',
         primarySkillId: 'cross-source-dashboard',
-        supportingSkillIds: ['build-apps', 'cron', 'composio-credentials'],
+        supportingSkillIds: ['build-apps', 'cron', 'composio-credentials', 'impeccable'],
         surfaces: ['home', 'desktop'],
     },
     {
@@ -139,7 +139,7 @@ export const USE_CASES = [
         ],
         seedPrompt: 'Build an internal admin tools app for me. The app should include a file browser scoped to my sandbox, a streaming web terminal, and buttons for common ops actions (reboot, clear cache, redeploy). Gate access by email or workspace. Start by asking: which sandbox/server the tools should target, the top three actions I run most often, and who should have access. Then build it, deploy it, and share the URL.',
         primarySkillId: 'build-apps',
-        supportingSkillIds: ['internal-tracker-app'],
+        supportingSkillIds: ['internal-tracker-app', 'impeccable'],
         surfaces: ['home', 'desktop'],
     },
     /* ──────────────────────────── Growth / GTM ─────────────────────────── */
@@ -255,7 +255,7 @@ export const USE_CASES = [
         ],
         seedPrompt: 'Run a landing page + ad copy A/B iteration loop. Each round, generate 3–5 distinct variants with a hypothesis and target metric, write the test plan with sample size, then after results come in produce a scorecard and the next round. Keep a living doc of winning copy I can lift into prod. Start by asking: the current landing URL or ad, the metric we are moving, and any voice guardrails.',
         primarySkillId: 'branded-asset-generator',
-        supportingSkillIds: ['branded-content', 'seo-content-writer', 'media-creation'],
+        supportingSkillIds: ['branded-content', 'seo-content-writer', 'media-creation', 'impeccable'],
         surfaces: ['home', 'desktop'],
     },
     /* ──────────────────────────── Content / Marketing ─────────────────────────── */
@@ -543,7 +543,7 @@ export const USE_CASES = [
         ],
         seedPrompt: 'Build a live cross-source dashboard pulling from Stripe + PostHog + Convex + GSC (and any others I name). Show top-line cards plus drill-downs on the 3–5 metrics that matter, with a shareable URL the team can bookmark. Refresh in the background on a cron. Start by asking: which sources to connect, the 3–5 metrics, and the default window + refresh cadence.',
         primarySkillId: 'cross-source-dashboard',
-        supportingSkillIds: ['build-apps', 'composio-credentials', 'cron'],
+        supportingSkillIds: ['build-apps', 'composio-credentials', 'cron', 'impeccable'],
         surfaces: ['home', 'desktop'],
     },
     {
@@ -713,7 +713,7 @@ export const USE_CASES = [
         ],
         seedPrompt: 'Build a typed spreadsheet app, Airtable-style. Multi-tab, with the columns I describe (text / number / date / select / links), full CRUD with optimistic updates + undo, per-tab filters/sorts/saved views, and a shareable URL with read/write permissions. Start by asking: the tabs + columns I need, who can edit vs view, and any starter data to import.',
         primarySkillId: 'internal-tracker-app',
-        supportingSkillIds: ['build-apps'],
+        supportingSkillIds: ['build-apps', 'impeccable'],
         surfaces: ['home', 'desktop'],
     },
     {
@@ -741,7 +741,7 @@ export const USE_CASES = [
         ],
         seedPrompt: 'Build a custom CRM / pipeline tracker. Stages I define with drag-to-move, per-record fields tailored to my pipeline, activity log + notes per record, and CSV / sheet import to seed it. Start by asking: the stages + fields, where existing data lives, and who needs access.',
         primarySkillId: 'internal-tracker-app',
-        supportingSkillIds: ['crm', 'build-apps'],
+        supportingSkillIds: ['crm', 'build-apps', 'impeccable'],
         surfaces: ['home', 'desktop'],
     },
     {
@@ -770,7 +770,7 @@ export const USE_CASES = [
         ],
         seedPrompt: 'Build internal dashboards behind permission-gated URLs. Per-role visibility (admin / ops / etc.), live data refreshed in the background, and an audit log of who viewed what. Start by asking: which data sources + views, the roles + what each should see, and the refresh cadence per panel.',
         primarySkillId: 'cross-source-dashboard',
-        supportingSkillIds: ['build-apps', 'composio-credentials'],
+        supportingSkillIds: ['build-apps', 'composio-credentials', 'impeccable'],
         surfaces: ['home', 'desktop'],
     },
     {
@@ -798,7 +798,7 @@ export const USE_CASES = [
         ],
         seedPrompt: 'Build a brand asset portal + knowledge base. Searchable, tagged + categorized, with permissioned download links and a simple admin to add / retire entries. Start by asking: what lives in the portal (logos, decks, docs, tone guides), the tag taxonomy / existing structure, and who can read vs admin.',
         primarySkillId: 'build-apps',
-        supportingSkillIds: ['branded-asset-generator', 'file-conversion', 'pdf'],
+        supportingSkillIds: ['branded-asset-generator', 'file-conversion', 'pdf', 'impeccable'],
         surfaces: ['home', 'desktop'],
     },
     /* ──────────────────────────── Personal assistant ─────────────────────────── */
@@ -883,7 +883,7 @@ export const USE_CASES = [
         ],
         seedPrompt: 'Build me a personal knowledge base as a hosted app. Tabs for the categories I name (people, projects, decisions, preferences, etc.), full-text search, and a simple way to add entries from this chat. Start by asking: what I want to track, how I take notes today, and anything I should never save. Then build it, deploy it, and share the URL.',
         primarySkillId: 'internal-tracker-app',
-        supportingSkillIds: ['build-apps'],
+        supportingSkillIds: ['build-apps', 'impeccable'],
         surfaces: ['home', 'desktop'],
     },
     {
