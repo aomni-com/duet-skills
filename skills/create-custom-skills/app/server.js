@@ -1,5 +1,6 @@
 'use strict'
 const express = require('express')
+const rateLimit = require('express-rate-limit')
 const fs = require('fs')
 const path = require('path')
 const os = require('os')
@@ -44,39 +45,26 @@ function safeChildDir(baseDir, id) {
   return full
 }
 
-// --- Security: lightweight dependency-free rate limiting ---------------------
-// Fixed-window per-IP limiter. No external dep (express-rate-limit not present);
-// in-memory Map is fine for this single-process local app. Stale windows are
-// pruned lazily on each hit so the Map can't grow unbounded.
-function rateLimit({ windowMs, max }) {
-  const hits = new Map() // ip -> { count, resetAt }
-  return function limiter(req, res, next) {
-    const now = Date.now()
-    const ip = req.ip || (req.socket && req.socket.remoteAddress) || 'unknown'
-    let rec = hits.get(ip)
-    if (!rec || now >= rec.resetAt) {
-      rec = { count: 0, resetAt: now + windowMs }
-      hits.set(ip, rec)
-    }
-    rec.count += 1
-    // Opportunistic prune of expired entries to bound memory.
-    if (hits.size > 1000) {
-      for (const [k, v] of hits) if (now >= v.resetAt) hits.delete(k)
-    }
-    if (rec.count > max) {
-      const retry = Math.ceil((rec.resetAt - now) / 1000)
-      res.set('Retry-After', String(retry))
-      return res.status(429).json({ error: 'rate limit exceeded, try again later' })
-    }
-    next()
-  }
-}
-
-// General read/write API limit, plus a stricter limit for the expensive
-// /api/scan handler (shells out to scanner + enrichment). /healthz is never
-// rate limited so it stays a fast, unlimited liveness probe.
-const apiLimiter = rateLimit({ windowMs: 60 * 1000, max: 120 })
-const scanLimiter = rateLimit({ windowMs: 60 * 1000, max: 6 })
+// --- Security: rate limiting via express-rate-limit --------------------------
+// express-rate-limit is the standard, well-modeled limiter (CodeQL recognizes
+// it). In-memory store is fine for this single-process local app. General
+// read/write API limit, plus a stricter limit for the expensive /api/scan
+// handler (shells out to scanner + enrichment). /healthz is never rate limited
+// so it stays a fast, unlimited liveness probe.
+const apiLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 120,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'rate limit exceeded, try again later' },
+})
+const scanLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 6,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'rate limit exceeded, try again later' },
+})
 
 const AGENTS_SKILLS_DIR = path.join(os.homedir(), '.agents', 'skills')
 
