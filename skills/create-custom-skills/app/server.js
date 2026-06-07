@@ -23,6 +23,61 @@ const app = express()
 app.use(express.json())
 app.use(express.static(path.join(__dirname, 'public')))
 
+// --- Security: safe path resolution -----------------------------------------
+// A user-supplied id (req.params.id) must never escape its intended base dir.
+// Reject anything with path separators / traversal segments / nul bytes, then
+// resolve and assert the final path stays strictly inside baseDir. Returns the
+// absolute child dir on success, or null if the id is unsafe / out of bounds.
+function safeChildDir(baseDir, id) {
+  const raw = String(id == null ? '' : id)
+  // Whitelist: ids are slugs (see slugify). Anything with separators, traversal
+  // dots, leading dots, nul bytes, or non-slug chars is rejected outright.
+  if (!raw || raw.length > 200) return null
+  if (raw.includes('/') || raw.includes('\\') || raw.includes('\0')) return null
+  if (raw === '.' || raw === '..' || raw.includes('..')) return null
+  if (!/^[a-zA-Z0-9._-]+$/.test(raw)) return null
+  const base = path.resolve(baseDir)
+  const full = path.resolve(base, raw)
+  // Must be a direct child strictly inside base (path.sep guards prefix matches).
+  if (full !== path.join(base, raw)) return null
+  if (!full.startsWith(base + path.sep)) return null
+  return full
+}
+
+// --- Security: lightweight dependency-free rate limiting ---------------------
+// Fixed-window per-IP limiter. No external dep (express-rate-limit not present);
+// in-memory Map is fine for this single-process local app. Stale windows are
+// pruned lazily on each hit so the Map can't grow unbounded.
+function rateLimit({ windowMs, max }) {
+  const hits = new Map() // ip -> { count, resetAt }
+  return function limiter(req, res, next) {
+    const now = Date.now()
+    const ip = req.ip || (req.socket && req.socket.remoteAddress) || 'unknown'
+    let rec = hits.get(ip)
+    if (!rec || now >= rec.resetAt) {
+      rec = { count: 0, resetAt: now + windowMs }
+      hits.set(ip, rec)
+    }
+    rec.count += 1
+    // Opportunistic prune of expired entries to bound memory.
+    if (hits.size > 1000) {
+      for (const [k, v] of hits) if (now >= v.resetAt) hits.delete(k)
+    }
+    if (rec.count > max) {
+      const retry = Math.ceil((rec.resetAt - now) / 1000)
+      res.set('Retry-After', String(retry))
+      return res.status(429).json({ error: 'rate limit exceeded, try again later' })
+    }
+    next()
+  }
+}
+
+// General read/write API limit, plus a stricter limit for the expensive
+// /api/scan handler (shells out to scanner + enrichment). /healthz is never
+// rate limited so it stays a fast, unlimited liveness probe.
+const apiLimiter = rateLimit({ windowMs: 60 * 1000, max: 120 })
+const scanLimiter = rateLimit({ windowMs: 60 * 1000, max: 6 })
+
 const AGENTS_SKILLS_DIR = path.join(os.homedir(), '.agents', 'skills')
 
 // Directories that may hold an installed skill's SKILL.md, checked in order.
@@ -164,7 +219,7 @@ function slugify(name) {
 }
 
 // --- API: full library index -------------------------------------------------
-app.get('/api/library', (req, res) => {
+app.get('/api/library', apiLimiter, (req, res) => {
   try {
     // Always read fresh from disk so manual scans/seeds are reflected.
     const index = fs.existsSync(lib.INDEX_FILE)
@@ -181,8 +236,9 @@ app.get('/api/library', (req, res) => {
 })
 
 // --- API: single skill (meta + SKILL.md) -------------------------------------
-app.get('/api/skills/:id', (req, res) => {
-  const dir = path.join(lib.SKILLS_DIR, req.params.id)
+app.get('/api/skills/:id', apiLimiter, (req, res) => {
+  const dir = safeChildDir(lib.SKILLS_DIR, req.params.id)
+  if (!dir) return res.status(404).json({ error: 'skill not found' })
   const meta = lib.readJSON(path.join(dir, 'meta.json'))
   if (!meta) return res.status(404).json({ error: 'skill not found' })
   let skillMd = ''
@@ -191,8 +247,9 @@ app.get('/api/skills/:id', (req, res) => {
 })
 
 // --- API: single board (meta + definition.json) ------------------------------
-app.get('/api/boards/:id', (req, res) => {
-  const dir = path.join(lib.BOARDS_DIR, req.params.id)
+app.get('/api/boards/:id', apiLimiter, (req, res) => {
+  const dir = safeChildDir(lib.BOARDS_DIR, req.params.id)
+  if (!dir) return res.status(404).json({ error: 'board not found' })
   const meta = lib.readJSON(path.join(dir, 'meta.json'))
   if (!meta) return res.status(404).json({ error: 'board not found' })
   const definition = lib.readJSON(path.join(dir, 'definition.json'), {})
@@ -200,9 +257,10 @@ app.get('/api/boards/:id', (req, res) => {
 })
 
 // --- API: publish a draft skill into ~/.agents/skills/ -----------------------
-app.post('/api/skills/:id/publish', (req, res) => {
+app.post('/api/skills/:id/publish', apiLimiter, (req, res) => {
   try {
-    const dir = path.join(lib.SKILLS_DIR, req.params.id)
+    const dir = safeChildDir(lib.SKILLS_DIR, req.params.id)
+    if (!dir) return res.status(404).json({ error: 'skill not found' })
     const meta = lib.readJSON(path.join(dir, 'meta.json'))
     if (!meta) return res.status(404).json({ error: 'skill not found' })
     const skillMdPath = path.join(dir, 'SKILL.md')
@@ -228,7 +286,7 @@ app.post('/api/skills/:id/publish', (req, res) => {
 })
 
 // --- API: trigger a scan ------------------------------------------------------
-app.post('/api/scan', (req, res) => {
+app.post('/api/scan', scanLimiter, (req, res) => {
   const args = req.body && req.body.noAi ? ['scan.js', '--no-ai'] : ['scan.js']
   execFile('node', args, { cwd: SCANNER_DIR, timeout: 150000, maxBuffer: 4 * 1024 * 1024 }, (err, stdout, stderr) => {
     const index = lib.regenerateIndex()
