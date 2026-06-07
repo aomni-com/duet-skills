@@ -1,0 +1,860 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<script>(function(){var t=new URLSearchParams(location.search).get('theme');if(t)document.documentElement.dataset.theme=t;})()</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Skills &amp; Boards Library</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<style>
+:root {
+  --brand: #2c74d2; --brand-subtle: rgba(44,116,210,0.08); --brand-tint: rgba(44,116,210,0.10); --brand-ring: rgba(44,116,210,0.30);
+  --bg: #FBFDFC; --bg-card: #FFFFFF; --bg-secondary: #EFF2F1; --bg-elevated: #F5F8F7;
+  --text: #1C211F; --text-secondary: #5C635F; --text-muted: #828884;
+  --text-on-brand: #fff;
+  --border: #E2E6E4; --border-strong: #D5D8D6; --border-input: #C9CDCB; --border-ring: #B5BAB8;
+  --primary: #232726; --primary-text: #fff;
+  --destructive: #E5484D; --success: #30A46C; --warning: #F5A623;
+  --popover: #FFFFFF; --popover-text: #1C211F;
+  --radius: 14px; --radius-md: 10px; --radius-sm: 7px;
+  --shadow-sm: 0 1px 2px 0 rgba(16,24,40,0.05), 0 1px 3px 0 rgba(16,24,40,0.04);
+  --shadow-md: 0 4px 12px -2px rgba(16,24,40,0.10), 0 2px 6px -2px rgba(16,24,40,0.06);
+  --shadow-lg: 0 1px 3px 0 rgba(0,0,0,0.1), 0 18px 40px -12px rgba(0,0,0,0.28);
+  --gutter: 24px;
+  --font-sans: 'Inter', 'Geist Sans', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --brand: #4a90d9; --brand-subtle: rgba(74,144,217,0.15); --brand-tint: rgba(74,144,217,0.14); --brand-ring: rgba(74,144,217,0.35);
+    --bg: #060707; --bg-card: #151817; --bg-secondary: #1F2221; --bg-elevated: #1A1D1C;
+    --text: #E8EDEB; --text-secondary: #A9AEAB; --text-muted: #7E8480;
+    --border: #2A302E; --border-strong: #333937; --border-input: #3F4543; --border-ring: #555C59;
+    --primary: #E1E6E4; --primary-text: #191C1B;
+    --destructive: #E5484D; --success: #3CB179;
+    --popover: #151817; --popover-text: #E8EDEB;
+    --shadow-md: 0 4px 14px -2px rgba(0,0,0,0.45), 0 2px 6px -2px rgba(0,0,0,0.35);
+  }
+}
+html[data-theme="dark"] {
+  --brand: #4a90d9; --brand-subtle: rgba(74,144,217,0.15); --brand-tint: rgba(74,144,217,0.14); --brand-ring: rgba(74,144,217,0.35);
+  --bg: #060707; --bg-card: #151817; --bg-secondary: #1F2221; --bg-elevated: #1A1D1C;
+  --text: #E8EDEB; --text-secondary: #A9AEAB; --text-muted: #7E8480;
+  --border: #2A302E; --border-strong: #333937; --border-input: #3F4543; --border-ring: #555C59;
+  --primary: #E1E6E4; --primary-text: #191C1B;
+  --destructive: #E5484D; --success: #3CB179;
+  --popover: #151817; --popover-text: #E8EDEB;
+  --shadow-md: 0 4px 14px -2px rgba(0,0,0,0.45), 0 2px 6px -2px rgba(0,0,0,0.35);
+}
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ===== B1. Full-page Mercury-inspired gradient background ===== */
+body {
+  font-family: var(--font-sans); color: var(--text); line-height: 1.5; font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  background-color: #1a5fa8;
+  background-image:
+    radial-gradient(ellipse at 15% 40%, rgba(120, 190, 255, 0.55) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 15%, rgba(160, 210, 255, 0.4) 0%, transparent 50%),
+    radial-gradient(ellipse at 65% 85%, rgba(80, 150, 230, 0.45) 0%, transparent 55%),
+    radial-gradient(ellipse at 40% 70%, rgba(100, 170, 255, 0.3) 0%, transparent 45%),
+    linear-gradient(145deg, #1a4f8e 0%, #2d79c7 30%, #4a9fd8 60%, #7dc4f5 100%);
+  background-size: 200% 200%;
+  min-height: 100vh;
+  opacity: 0; transition: opacity .35s ease;
+  animation: bgShift 18s ease infinite; /* C9 subtle drift */
+}
+body.loaded { opacity: 1; }
+@keyframes bgShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+/* 🎨 ASSET NEEDED: Replace 'pattern.png' with a noise/mesh texture from Ani.
+   Recommended: ~200x200px tileable PNG, very subtle (5-8% opacity).
+   Applied as body::before overlay on the gradient. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: url('pattern.png') repeat;
+  opacity: 0.04;
+  pointer-events: none;
+  z-index: 0;
+}
+.container { max-width: 980px; margin: 0 auto; padding: 32px var(--gutter) 80px; position: relative; z-index: 1; }
+
+/* ===== B3. Glass header panel ===== */
+.header-glass {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: var(--radius);
+  padding: 22px 24px 16px;
+  margin-bottom: 22px;
+  box-shadow: 0 4px 24px rgba(0, 40, 100, 0.12);
+}
+
+/* Header */
+.header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.header-left { min-width: 0; }
+.title-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.header h1 { font-size: 23px; font-weight: 700; letter-spacing: -0.02em; color: #fff; }
+.ws-badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 9999px; background: rgba(255,255,255,0.18); color: #fff; font-size: 12px; font-weight: 600; border: 1px solid rgba(255,255,255,0.35); }
+.ws-badge .glyph { font-size: 12px; }
+.tagline { color: rgba(255,255,255,0.78); font-size: 13.5px; margin-top: 6px; max-width: 620px; }
+.header-actions { display: flex; align-items: center; gap: 8px; }
+
+/* A4. Stats strip — no border box, just a muted line */
+.stats { font-size: 12px; color: rgba(255,255,255,0.7); padding: 12px 0 4px; display: flex; align-items: center; gap: 8px; font-weight: 400; }
+.stats .stat-dot { width: 7px; height: 7px; border-radius: 9999px; background: rgba(255,255,255,0.85); animation: pulse 2.5s ease-in-out infinite; } /* C8 */
+@keyframes pulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.5; transform:scale(0.8); } }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: var(--radius-md); font-family: var(--font-sans); font-size: 14px; font-weight: 600; border: none; cursor: pointer; transition: transform .12s ease, opacity .15s, background .15s, border-color .15s; min-height: 38px; }
+.btn:hover { opacity: .92; }
+.btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: .5; cursor: default; }
+.btn-primary { background: var(--primary); color: var(--primary-text); }
+.btn-brand { background: var(--brand); color: var(--text-on-brand); box-shadow: 0 1px 2px rgba(44,116,210,.25); }
+.btn-outline { background: var(--bg-card); color: var(--text); border: 1px solid var(--border-strong); }
+.btn-outline:hover { background: var(--bg-elevated); opacity: 1; }
+/* Header-scoped outline button reads on the glass panel */
+.header-actions .btn-outline { background: rgba(255,255,255,0.92); border-color: rgba(255,255,255,0.6); color: var(--brand); }
+.btn-ghost { background: transparent; color: var(--text-secondary); padding: 6px 10px; }
+.btn-ghost:hover { background: var(--bg-secondary); }
+.btn-sm { padding: 6px 12px; font-size: 13px; min-height: 32px; }
+.btn-block { width: 100%; justify-content: center; min-height: 44px; font-size: 15px; }
+.btn .ico { font-size: 13px; line-height: 1; }
+/* C5. Copy success state */
+.btn-copy-success { background: #16a34a !important; color: #fff !important; border-color: #16a34a !important; transition: background 0.2s, transform 0.1s; }
+.btn-press { transform: scale(0.97); }
+/* C6. Scan spin icon */
+.spin-icon { display: inline-block; transition: transform 0.3s; }
+.scanning .spin-icon { animation: s 0.8s linear infinite; }
+
+/* Tabs */
+.tabs { display: flex; gap: 6px; margin: 18px 0 0; padding: 4px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.22); border-radius: var(--radius-md); width: fit-content; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+.tab { display: inline-flex; align-items: center; gap: 8px; background: none; border: none; padding: 8px 16px; font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.65); cursor: pointer; border-radius: var(--radius-sm); transition: background .15s, color .15s; }
+.tab:hover { color: #fff; }
+.tab.active { color: var(--brand); background: rgba(255,255,255,0.92); box-shadow: var(--shadow-sm); }
+.tab .count { display: inline-flex; align-items: center; justify-content: center; min-width: 20px; height: 18px; padding: 0 6px; border-radius: 9999px; background: rgba(255,255,255,0.22); color: #fff; font-weight: 600; font-size: 11px; }
+.tab.active .count { background: var(--brand-tint); color: var(--brand); }
+
+/* Toolbar */
+.toolbar { display: flex; gap: 8px; align-items: center; margin-bottom: 22px; flex-wrap: wrap; }
+/* A3 + B2 + C7. Glass search with inline icon */
+.search-wrap {
+  position: relative; flex: 1; min-width: 200px;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(255,255,255,0.6);
+  border-radius: var(--radius-md);
+  transition: box-shadow .15s, border-color .15s;
+}
+.search-wrap:focus-within {
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.25), 0 4px 16px rgba(0,40,100,0.1);
+  border-color: rgba(255,255,255,0.8);
+}
+.search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 15px; height: 15px; color: var(--text-muted); pointer-events: none; }
+.search { width: 100%; padding: 10px 12px 10px 38px; border: none; border-radius: var(--radius-md); background: transparent; color: var(--text); font: inherit; font-size: 14px; outline: none; }
+.search::placeholder { color: var(--text-muted); }
+
+/* Sections */
+.section { margin-top: 32px; }
+.section:first-child { margin-top: 4px; }
+.section-banner {
+  display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.22);
+  border-radius: var(--radius-md); color: #fff;
+}
+.section-banner .s-ico { font-size: 17px; line-height: 1; }
+.section-banner h2 { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; color: #fff; }
+.section-banner .section-count { display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 19px; padding: 0 7px; border-radius: 9999px; background: rgba(255,255,255,0.22); color: #fff; font-size: 11px; font-weight: 600; }
+.section-sub { color: rgba(255,255,255,0.7); font-size: 13px; margin: 10px 2px 16px; }
+.section-empty { color: rgba(255,255,255,0.85); font-size: 13px; background: rgba(255,255,255,0.10); border: 1px dashed rgba(255,255,255,0.35); border-radius: var(--radius-md); padding: 22px 18px; text-align: center; }
+
+/* List + rows (Mercury-style horizontal glass cards) */
+.list { display: flex; flex-direction: column; gap: 12px; }
+.grid { display: block; }
+/* B2 + C2. Glassmorphism rows with smooth lift */
+.row {
+  position: relative;
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: var(--radius); padding: 0;
+  box-shadow: 0 2px 12px rgba(0, 40, 100, 0.08), 0 1px 3px rgba(0, 0, 0, 0.06);
+  display: flex; flex-direction: column; cursor: default;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+  /* C1. staggered entrance */
+  animation: fadeUp 0.35s ease both;
+}
+.row:hover {
+  transform: translateY(-3px);
+  background: rgba(255, 255, 255, 0.90);
+  border-color: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 12px 40px rgba(0, 60, 140, 0.18), 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+/* Always-visible head of an expandable row */
+.row-head { display: flex; gap: 16px; align-items: flex-start; padding: 16px 18px; cursor: pointer; }
+.row-chevron { flex-shrink: 0; align-self: center; display: flex; align-items: center; color: var(--text-muted); transition: transform 0.3s ease, color 0.18s ease; }
+.row-chevron svg { width: 18px; height: 18px; }
+/* Inline expanding region (accordion). 0fr -> 1fr gives a true auto-height ease. */
+.row-expand {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+.list-row.expanded .row-expand { grid-template-rows: 1fr; }
+.row-expand > .row-expand-inner { overflow: hidden; min-height: 0; padding: 0 18px 18px; }
+/* Expanded card: elevated/focused */
+.list-row.expanded { transform: none; border-color: var(--brand-ring); background: rgba(255,255,255,0.96); box-shadow: 0 18px 50px rgba(0,60,140,0.22), 0 4px 12px rgba(0,0,0,0.10); }
+.list-row.expanded:hover { transform: none; box-shadow: 0 18px 50px rgba(0,60,140,0.22), 0 4px 12px rgba(0,0,0,0.10); }
+.list-row.expanded .row-chevron { transform: rotate(180deg); color: var(--brand); }
+/* Inline tab strip + panels (same content the modal used) */
+.row-tabs { display: flex; gap: 2px; border-top: 1px solid var(--border); padding-top: 4px; }
+.rtab { padding: 11px 14px; font-size: 13.5px; font-weight: 600; color: var(--text-secondary); border: none; background: none; cursor: pointer; border-bottom: 2px solid transparent; transition: color .15s, border-color .15s; }
+.rtab:hover { color: var(--text); }
+.rtab.active { color: var(--brand); border-bottom-color: var(--brand); }
+.row-panels { padding-top: 16px; }
+.rpanel { display: none; }
+.rpanel.active { display: block; }
+.rpanel.mpanel-anim { animation: tabIn 0.2s ease both; }
+@keyframes fadeUp { from { opacity:0; transform: translateY(12px); } to { opacity:1; transform: translateY(0); } }
+.list .row:nth-child(1) { animation-delay: 0.05s; }
+.list .row:nth-child(2) { animation-delay: 0.10s; }
+.list .row:nth-child(3) { animation-delay: 0.15s; }
+.list .row:nth-child(4) { animation-delay: 0.20s; }
+.list .row:nth-child(5) { animation-delay: 0.25s; }
+.list .row:nth-child(6) { animation-delay: 0.30s; }
+.list .row:nth-child(7) { animation-delay: 0.35s; }
+.list .row:nth-child(8) { animation-delay: 0.40s; }
+.row-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 7px; }
+/* A8. Card name */
+.row-name { font-size: 16px; font-weight: 700; letter-spacing: -0.015em; line-height: 1.25; word-break: break-word; color: var(--text); }
+/* Title line: name + command chip share a row, wrapping on narrow widths. */
+.row-title-line { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+/* A8. Command chip */
+.row-cmd { display: inline-flex; align-items: center; width: fit-content; font-family: var(--font-mono); font-size: 12px; color: var(--text-secondary); background: var(--bg-secondary); border: 1px solid var(--border-strong); padding: 3px 9px; border-radius: var(--radius-sm); }
+.row-cmd.cmd-brand { color: var(--brand); background: var(--brand-tint); border-color: var(--brand-ring); }
+.row-desc { color: var(--text-secondary); font-size: 13px; line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.row-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+.tool-badge { display: inline-flex; align-items: center; gap: 4px; background: var(--bg-secondary); color: var(--text-secondary); border: 1px solid var(--border); padding: 2px 9px; border-radius: 9999px; font-size: 11px; font-weight: 500; }
+.tool-badge .tb-ico { font-size: 11px; line-height: 1; }
+/* Tool/dependency pills carry a touch of brand so they read as the primary metadata. */
+.tool-badge.tb-dep { background: var(--brand-tint); color: var(--brand); border-color: var(--brand-ring); }
+.tool-badge.tb-none { background: transparent; color: var(--text-muted); border-style: dashed; }
+/* TYPE label — deliberately quieter than tools/status: plain muted micro-text. */
+.type-label { font-size: 10.5px; font-weight: 500; letter-spacing: 0.02em; color: var(--text-muted); white-space: nowrap; text-transform: none; }
+.row-side { display: flex; flex-direction: column; align-items: flex-end; justify-content: space-between; gap: 12px; align-self: stretch; flex-shrink: 0; }
+.status-chip { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 9999px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+.status-chip .dot { width: 6px; height: 6px; border-radius: 9999px; }
+.chip-connected { background: rgba(48,163,108,.14); color: var(--success); border: 1px solid rgba(48,163,108,.3); }
+.chip-connected .dot { background: var(--success); }
+.chip-builtin { background: var(--bg-secondary); color: var(--text-muted); border: 1px solid var(--border); }
+.chip-builtin .dot { background: var(--text-muted); }
+.chip-draft { background: rgba(245,166,35,.14); color: var(--warning); border: 1px solid rgba(245,166,35,.3); }
+.chip-draft .dot { background: var(--warning); }
+.row-side-actions { display: flex; gap: 8px; align-items: center; }
+.empty { display: none; }
+
+/* Empty / first-run state */
+.empty-state { text-align: center; padding: 64px 20px; color: #fff; }
+.empty-state .em-ico { font-size: 56px; line-height: 1; }
+.empty-state h2 { font-size: 19px; font-weight: 700; margin-top: 18px; letter-spacing: -0.01em; color: #fff; }
+.empty-state p { color: rgba(255,255,255,0.78); font-size: 14px; margin: 8px auto 22px; max-width: 380px; }
+
+/* ===== Modal ===== */
+.overlay { position: fixed; inset: 0; background: rgba(8,24,48,.45); backdrop-filter: blur(3px); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 50; transition: opacity 0.2s ease; }
+.overlay.open { display: flex; animation: fadeIn 0.15s ease both; }
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+/* A7 + B2 + C3. Glass modal with springy entrance */
+.modal {
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(40px) saturate(200%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%);
+  color: var(--popover-text);
+  border: 1px solid rgba(255,255,255,0.7);
+  border-radius: var(--radius); box-shadow: var(--shadow-lg);
+  width: 100%; max-width: 680px; max-height: 92vh; min-height: 500px;
+  display: flex; flex-direction: column; overflow: hidden; position: relative;
+  animation: modalIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.94) translateY(16px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.modal-close { position: absolute; top: 14px; right: 14px; z-index: 4; background: rgba(255,255,255,.7); backdrop-filter: blur(4px); border: 1px solid var(--border); border-radius: 9999px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-secondary); font-size: 15px; }
+.modal-close:hover { background: var(--bg-card); color: var(--text); }
+
+/* Floating preview card (Mercury agent card) */
+.modal-preview { position: relative; display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 36px 26px 26px; background: linear-gradient(155deg, #2c74d2 0%, #4a90d9 45%, #7eb4ec 100%); }
+html[data-theme="dark"] .modal-preview, :root:not([data-theme="light"]) .modal-preview { background: linear-gradient(155deg, #1c4d8f 0%, #2c74d2 50%, #3f6fa8 100%); }
+.preview-card { background: var(--bg-card); border: 1px solid rgba(255,255,255,.5); border-radius: var(--radius); box-shadow: 0 12px 30px -8px rgba(0,0,0,.35); padding: 18px 22px; display: flex; align-items: center; gap: 16px; min-width: 300px; max-width: 100%; }
+.preview-icon { width: 56px; height: 56px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 700; flex-shrink: 0; background: var(--brand-tint); color: var(--brand); border: 1px solid var(--brand-ring); overflow: hidden; }
+.preview-text { min-width: 0; }
+.preview-name { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; }
+.preview-cmd { font-family: var(--font-mono); font-size: 12px; color: var(--brand); margin-top: 4px; }
+
+/* Modal tabs */
+.modal-tabs { display: flex; gap: 2px; padding: 0 18px; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.4); }
+.mtab { padding: 13px 14px; font-size: 13.5px; font-weight: 600; color: var(--text-secondary); border: none; background: none; cursor: pointer; border-bottom: 2px solid transparent; transition: color .15s, border-color .15s; }
+.mtab:hover { color: var(--text); }
+.mtab.active { color: var(--brand); border-bottom-color: var(--brand); }
+.modal-body { padding: 22px 24px 24px; overflow: auto; }
+.mpanel { display: none; }
+.mpanel.active { display: block; }
+/* C4. Tab slide-in inside modal */
+.mpanel.mpanel-anim { animation: tabIn 0.2s ease both; }
+@keyframes tabIn { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: translateX(0); } }
+/* A8. outcomes/section label */
+.panel-h { font-size: 10.5px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted); margin-bottom: 12px; }
+.outcomes { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 22px; }
+.outcomes li { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.5; color: var(--text); }
+.outcomes li .chk { color: var(--success); font-weight: 700; flex-shrink: 0; }
+
+/* Tools tab rows */
+.tool-row { display: flex; align-items: center; gap: 14px; padding: 14px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--bg-card); margin-bottom: 10px; }
+.tool-row-icon { width: 42px; height: 42px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 21px; flex-shrink: 0; background: var(--bg-secondary); }
+.tool-row-main { flex: 1; min-width: 0; }
+.tool-row-name { font-size: 14px; font-weight: 600; }
+.tool-row-desc { font-size: 12.5px; color: var(--text-secondary); margin-top: 2px; }
+.tool-none { color: var(--text-muted); font-size: 13.5px; background: var(--bg-card); border: 1px dashed var(--border-strong); border-radius: var(--radius-md); padding: 20px; text-align: center; }
+
+/* Advanced tab */
+.meta-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.meta-table td { padding: 9px 4px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.meta-table td:first-child { color: var(--text-muted); font-weight: 600; width: 110px; white-space: nowrap; }
+.meta-table td:last-child { color: var(--text); word-break: break-word; font-family: var(--font-mono); font-size: 12px; }
+.meta-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+.tag { background: var(--bg-secondary); color: var(--text-secondary); border: 1px solid var(--border); padding: 1px 8px; border-radius: 9999px; font-size: 11px; }
+
+.md h1 { font-size: 20px; margin: 6px 0 16px; letter-spacing: -0.01em; }
+.md h2 { font-size: 16.5px; margin: 22px 0 10px; }
+.md h3 { font-size: 14.5px; margin: 18px 0 8px; }
+.md p, .md li { font-size: 13.5px; color: var(--text); margin: 8px 0; line-height: 1.65; }
+.md ul, .md ol { padding-left: 24px; margin: 8px 0; }
+.md li { margin: 5px 0; }
+.md code { font-family: var(--font-mono); font-size: 12.5px; background: var(--bg-secondary); padding: 1px 6px; border-radius: 5px; }
+.md pre { background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; overflow: auto; margin: 14px 0; line-height: 1.6; }
+.md pre code { background: none; padding: 0; }
+.md hr { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
+.md a { color: var(--brand); }
+.json { font-family: var(--font-mono); font-size: 12.5px; white-space: pre; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; overflow: auto; max-height: 60vh; line-height: 1.6; }
+
+.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--primary); color: var(--primary-text); padding: 11px 20px; border-radius: var(--radius-md); box-shadow: var(--shadow-lg); font-size: 13px; font-weight: 500; z-index: 80; opacity: 0; transition: opacity .2s; pointer-events: none; }
+.toast.show { opacity: 1; }
+.spin { width: 14px; height: 14px; border: 2px solid currentColor; border-top-color: transparent; border-radius: 50%; display: inline-block; animation: s 0.7s linear infinite; }
+@keyframes s { to { transform: rotate(360deg); } }
+
+/* ===== Dark-mode glassmorphism + gradient overrides ===== */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) body {
+    background-color: #0d2d56;
+    background-image:
+      radial-gradient(ellipse at 15% 40%, rgba(60, 120, 200, 0.35) 0%, transparent 55%),
+      radial-gradient(ellipse at 85% 15%, rgba(40, 90, 160, 0.3) 0%, transparent 50%),
+      radial-gradient(ellipse at 65% 85%, rgba(30, 70, 130, 0.4) 0%, transparent 55%),
+      linear-gradient(145deg, #0d2d56 0%, #1a4a7a 45%, #243d6b 100%);
+  }
+  :root:not([data-theme="light"]) .row { background: rgba(15, 25, 50, 0.65); border-color: rgba(255,255,255,0.1); box-shadow: 0 2px 12px rgba(0,0,0,0.3); }
+  :root:not([data-theme="light"]) .row:hover { background: rgba(20, 32, 60, 0.8); border-color: rgba(255,255,255,0.18); box-shadow: 0 12px 40px rgba(0,0,0,0.45); }
+  :root:not([data-theme="light"]) .list-row.expanded { background: rgba(20, 32, 60, 0.85); border-color: var(--brand-ring); }
+  :root:not([data-theme="light"]) .search-wrap { background: rgba(15,25,50,0.7); border-color: rgba(255,255,255,0.12); }
+  :root:not([data-theme="light"]) .modal { background: rgba(18, 24, 40, 0.92); border-color: rgba(255,255,255,0.12); }
+  :root:not([data-theme="light"]) .modal-tabs { background: rgba(18,24,40,0.4); }
+  :root:not([data-theme="light"]) .tab.active { background: rgba(255,255,255,0.14); color: #fff; }
+  :root:not([data-theme="light"]) .header-actions .btn-outline { background: rgba(255,255,255,0.12); color: #fff; border-color: rgba(255,255,255,0.2); }
+}
+html[data-theme="dark"] body {
+  background-color: #0d2d56;
+  background-image:
+    radial-gradient(ellipse at 15% 40%, rgba(60, 120, 200, 0.35) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 15%, rgba(40, 90, 160, 0.3) 0%, transparent 50%),
+    radial-gradient(ellipse at 65% 85%, rgba(30, 70, 130, 0.4) 0%, transparent 55%),
+    linear-gradient(145deg, #0d2d56 0%, #1a4a7a 45%, #243d6b 100%);
+}
+html[data-theme="dark"] .row { background: rgba(15, 25, 50, 0.65); border-color: rgba(255,255,255,0.1); box-shadow: 0 2px 12px rgba(0,0,0,0.3); }
+html[data-theme="dark"] .row:hover { background: rgba(20, 32, 60, 0.8); border-color: rgba(255,255,255,0.18); box-shadow: 0 12px 40px rgba(0,0,0,0.45); }
+html[data-theme="dark"] .list-row.expanded { background: rgba(20, 32, 60, 0.85); border-color: var(--brand-ring); }
+html[data-theme="dark"] .search-wrap { background: rgba(15,25,50,0.7); border-color: rgba(255,255,255,0.12); }
+html[data-theme="dark"] .modal { background: rgba(18, 24, 40, 0.92); border-color: rgba(255,255,255,0.12); }
+html[data-theme="dark"] .modal-tabs { background: rgba(18,24,40,0.4); }
+html[data-theme="dark"] .tab.active { background: rgba(255,255,255,0.14); color: #fff; }
+html[data-theme="dark"] .header-actions .btn-outline { background: rgba(255,255,255,0.12); color: #fff; border-color: rgba(255,255,255,0.2); }
+
+@media (max-width: 640px) {
+  .header { flex-direction: column; align-items: stretch; }
+  .header-actions { justify-content: flex-start; }
+  .row { flex-wrap: wrap; }
+  .row-side { flex-direction: row; align-items: center; width: 100%; justify-content: space-between; align-self: auto; }
+}
+@media (max-width: 480px) {
+  .container { padding: 20px 16px 56px; }
+  .header h1 { font-size: 20px; }
+  .modal-body { padding-left: 16px; padding-right: 16px; }
+  .preview-card { min-width: 0; width: 100%; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <!-- B3. Header wrapped in glass panel -->
+  <div class="header-glass">
+    <div class="header">
+      <div class="header-left">
+        <div class="title-row">
+          <h1>Skills &amp; Boards Library</h1>
+          <span class="ws-badge"><span class="glyph">✦</span> team-aomni-com</span>
+        </div>
+        <div class="tagline">Reusable agent skills &amp; board workflows discovered across your workspace — view, customize, and publish them to your agent.</div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-outline btn-sm" id="scanBtn"><span class="ico spin-icon">↻</span> Run Scanner</button>
+      </div>
+    </div>
+    <div class="stats" id="genMeta"><span class="stat-dot"></span> Reusable agent skills &amp; board workflows discovered across your workspace.</div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="skills">Skills <span class="count" id="cSkills"></span></button>
+      <button class="tab" data-tab="boards">Boards <span class="count" id="cBoards"></span></button>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <div class="search-wrap">
+      <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd"/></svg>
+      <input class="search" id="search" placeholder="Search skills and boards..." />
+    </div>
+  </div>
+
+  <div id="grid" class="grid"></div>
+  <div id="empty" class="empty"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let DATA = { skills: [], boards: [] }
+let activeTab = 'skills'
+
+const $ = (s) => document.querySelector(s)
+function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2600) }
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])) }
+
+async function load() {
+  const r = await fetch('/api/library')
+  DATA = await r.json()
+  $('#cSkills').textContent = (DATA.skills || []).length
+  $('#cBoards').textContent = (DATA.boards || []).length
+  if (DATA.generatedAt) {
+    const d = new Date(DATA.generatedAt)
+    const when = d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
+    $('#genMeta').innerHTML =
+      `<span class="stat-dot"></span> ${(DATA.skills||[]).length} skills · ${(DATA.boards||[]).length} boards · last scanned ${esc(when)}`
+  }
+  render()
+  document.body.classList.add('loaded')
+}
+
+function matchesQuery(it, q) {
+  if (!q) return true
+  const hay = [it.name, it.description, it.source, (it.tags||[]).join(' ')].join(' ').toLowerCase()
+  return hay.includes(q)
+}
+
+function titleCase(name) {
+  return String(name || '').split('-').filter(Boolean)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+}
+
+// Human-readable blurb for each inferred dependency category (Tools tab).
+function toolDepDescription(tool) {
+  const map = {
+    'GitHub': 'Repository operations via the gh CLI / GitHub API.',
+    'Web': 'Web scraping, crawling, search, or SEO data.',
+    'Composio': 'Third-party app integrations via Composio.',
+    'Media/AI': 'Image, video, speech, or model generation.',
+    'Email': 'Email delivery and broadcast (Resend).',
+    'Browser': 'Headless browser / page automation.',
+    'Code': 'Runs or edits code in the sandbox.',
+    'Gmail': 'Send, read, and search messages across your inbox.',
+    'Slack': 'Post messages and read channels.',
+    'Stripe': 'Look up payments, customers, and subscriptions.',
+    'Google Search Console': 'Query search performance and coverage data.',
+  }
+  return map[tool] || 'External integration.'
+}
+
+function isComposio(s) { return String(s.source||'').startsWith('composio:') }
+function isInstalled(s) { return String(s.source||'').startsWith('installed:') }
+
+// A2. Human-readable display names for composio (connected-tool) skills.
+const COMPOSIO_NAMES = {
+  'composio:gmail': 'Gmail Triage',
+  'composio:google_search_console': 'Search Console Report',
+  'composio:slack': 'Slack Notify',
+  'composio:stripe': 'Stripe Lookup',
+};
+
+// A1. Human-readable descriptions for composio skills (replace raw SKILL.md text).
+const COMPOSIO_DESCRIPTIONS = {
+  'composio:gmail': 'Automatically sort, label, archive, and prioritize your inbox — batch-processed, zero manual effort.',
+  'composio:google_search_console': 'Pull top queries, impressions, clicks, and coverage issues into a clean weekly report.',
+  'composio:slack': 'Post formatted messages and alerts to any Slack channel from your agent or workflow.',
+  'composio:stripe': 'Look up customers, payments, subscriptions, and invoices without opening the Stripe dashboard.',
+};
+
+// Display name for a skill, preferring the curated composio name.
+function skillDisplayName(s) {
+  return COMPOSIO_NAMES[s.source] || titleCase(s.name)
+}
+
+// Display description, preferring the curated composio description.
+function skillDescription(s) {
+  return COMPOSIO_DESCRIPTIONS[s.source] || s.description
+}
+
+// Derive 2-3 outcome bullets from a skill description.
+function outcomes(desc) {
+  const text = String(desc || '').split(/\bUse when\b/i)[0].trim() || String(desc || '')
+  const parts = text.split(/(?<=[.!?])\s+/).map((p) => p.trim()).filter((p) => p.length > 4)
+  const picked = parts.slice(0, 3)
+  if (!picked.length) return [String(desc || 'Run this skill in any Duet chat.')]
+  return picked
+}
+
+function render() {
+  const q = $('#search').value.trim().toLowerCase()
+  const grid = $('#grid')
+  if (activeTab === 'boards') {
+    const items = (DATA.boards || []).filter((it) => matchesQuery(it, q))
+    $('#empty').style.display = items.length ? 'none' : 'block'
+    if (!items.length) { grid.innerHTML = ''; renderEmpty('boards'); return }
+    grid.innerHTML = `<div class="list">${items.map(boardCard).join('')}</div>`
+    return
+  }
+  // Skills tab: split into Custom Skills (composio:*) and Out of the Box (installed:*)
+  const skills = (DATA.skills || []).filter((it) => matchesQuery(it, q))
+  const custom = skills.filter((s) => isComposio(s))
+  const builtin = skills.filter((s) => isInstalled(s))
+  const other = skills.filter((s) => !isComposio(s) && !isInstalled(s))
+  $('#empty').style.display = skills.length ? 'none' : 'block'
+  if (!skills.length) { grid.innerHTML = ''; renderEmpty('skills'); return }
+  const customBody = custom.length
+    ? `<div class="list">${custom.map(skillCard).join('')}</div>`
+    : `<div class="section-empty">No custom skills yet — click <b>Run Scanner</b> to generate some from your connected tools and conversations.</div>`
+  const html = `
+    <div class="section">
+      <div class="section-banner">
+        <h2>Custom Skills</h2>
+        <span class="section-count">${custom.length}</span>
+      </div>
+      <p class="section-sub">Workspace-specific skills generated from your connected tools and conversations.</p>
+      ${customBody}
+    </div>
+    <div class="section">
+      <div class="section-banner neutral">
+        <h2>Out of the Box</h2>
+        <span class="section-count">${builtin.length + other.length}</span>
+      </div>
+      <p class="section-sub">Built-in Duet skills available to every workspace.</p>
+      <div class="list">${builtin.concat(other).map(skillCard).join('')}</div>
+    </div>`
+  grid.innerHTML = html
+}
+
+function renderEmpty(kind) {
+  $('#empty').innerHTML = `
+    <div class="empty-state">
+      <div class="em-ico">🧩</div>
+      <h2>No ${kind} yet</h2>
+      <p>Run the scanner to discover reusable ${kind} from your connected tools, installed skills, and team conversations.</p>
+      <button class="btn btn-brand" onclick="document.getElementById('scanBtn').click()"><span class="ico">↻</span> Run Scanner</button>
+    </div>`
+}
+
+// Status chip shown top-right of a skill row. Two-way: Draft vs Available.
+function statusChip(s) {
+  if (s.status !== 'published') return '<span class="status-chip chip-draft">Draft</span>'
+  return '<span class="status-chip chip-connected">Available</span>'
+}
+
+// TOOLS / dependencies for a skill (server-computed, falls back gracefully).
+function skillTools(s) { return Array.isArray(s.tools) ? s.tools : [] }
+// TYPE for a skill (server-computed): Integration / Duet skill / Custom.
+function skillType(s) {
+  if (s.type) return s.type
+  if (isComposio(s)) return 'Integration'
+  if (isInstalled(s)) return 'Duet skill'
+  return 'Custom'
+}
+
+// Dependency pill(s): the inferred tools, or a muted "No dependencies".
+function toolBadges(s) {
+  const tools = skillTools(s)
+  if (!tools.length) return `<div class="row-badges"><span class="tool-badge tb-none">No dependencies</span></div>`
+  return `<div class="row-badges">${tools.map((t) => `<span class="tool-badge tb-dep">${esc(t)}</span>`).join('')}</div>`
+}
+
+// Chevron indicator shown at the right of an expandable row head.
+const CHEVRON = '<div class="row-chevron"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7.5l5 5 5-5"/></svg></div>'
+
+// A5. Card head shows only Copy — Publish lives in the inline Advanced tab.
+function skillCard(s) {
+  const cmdClass = isComposio(s) ? 'row-cmd cmd-brand' : 'row-cmd'
+  return `<div class="row list-row" id="row-${s.id}">
+    <div class="row-head" onclick="toggleRow('${s.id}', event)">
+      <div class="row-main">
+        <div class="row-title-line">
+          <div class="row-name">${esc(skillDisplayName(s))}</div>
+          <span class="${cmdClass}">/${esc(s.name)}</span>
+        </div>
+        <div class="row-desc">${esc(skillDescription(s))}</div>
+        ${toolBadges(s)}
+      </div>
+      <div class="row-side">
+        <div style="display:flex;align-items:center;gap:8px">${statusChip(s)}<span class="type-label">${esc(skillType(s))}</span></div>
+        <div class="row-side-actions">
+          <button class="btn btn-outline btn-sm" onclick="copyCommand('${esc(s.name)}', this); event.stopPropagation();">Copy /${esc(s.name)}</button>
+        </div>
+      </div>
+      ${CHEVRON}
+    </div>
+    <div class="row-expand"><div class="row-expand-inner">${skillExpand(s)}</div></div>
+  </div>`
+}
+
+// Inline expandable content for a skill (same tabs the modal used).
+function skillExpand(s) {
+  const overviewDesc = skillDescription(s)
+  const overview = `
+    <div class="panel-h">What you'll achieve</div>
+    <ul class="outcomes">${outcomes(overviewDesc).map((o) => `<li><span class="chk">✓</span><span>${esc(o)}</span></li>`).join('')}</ul>`
+
+  // Tools tab: TYPE line + inferred dependency breakdown.
+  const tools = skillTools(s)
+  const typeRow = `<table class="meta-table" style="margin-bottom:14px">
+    <tr><td>Type</td><td style="font-family:var(--font-sans)">${esc(skillType(s))}</td></tr>
+    <tr><td>Tools</td><td style="font-family:var(--font-sans)">${tools.length ? esc(tools.join(', ')) : 'None'}</td></tr>
+  </table>`
+  let toolsHtml
+  if (tools.length) {
+    toolsHtml = typeRow + tools.map((t) => `<div class="tool-row">
+      <div class="tool-row-main">
+        <div class="tool-row-name">${esc(t)}</div>
+        <div class="tool-row-desc">${esc(toolDepDescription(t))}</div>
+      </div>
+    </div>`).join('')
+  } else {
+    toolsHtml = typeRow + `<div class="tool-none">No external dependencies required.</div>`
+  }
+
+  const tagsHtml = (s.tags || []).length
+    ? `<div class="meta-tags">${s.tags.map((t) => `<span class="tag">${esc(t)}</span>`).join('')}</div>` : '—'
+  const advanced = `<table class="meta-table">
+    <tr><td>Source</td><td>${esc(s.source)}</td></tr>
+    <tr><td>Status</td><td>${esc(s.status)}</td></tr>
+    <tr><td>ID</td><td>${esc(s.id)}</td></tr>
+    <tr><td>Created</td><td>${esc(s.createdAt || '—')}</td></tr>
+    <tr><td>Tags</td><td>${tagsHtml}</td></tr>
+  </table>`
+  const pubBtn = s.status === 'published' ? '' :
+    `<div style="margin-top:18px"><button class="btn btn-brand btn-sm" onclick="publishSkill('${s.id}', event)">Publish to agent</button></div>`
+
+  return `<div class="row-tabs">
+      <button class="rtab active" data-rtab="overview" onclick="switchRowTab('${s.id}','overview', event)">Overview</button>
+      <button class="rtab" data-rtab="tools" onclick="switchRowTab('${s.id}','tools', event)">Tools</button>
+      <button class="rtab" data-rtab="instructions" onclick="switchRowTab('${s.id}','instructions', event)">Instructions</button>
+      <button class="rtab" data-rtab="advanced" onclick="switchRowTab('${s.id}','advanced', event)">Advanced</button>
+    </div>
+    <div class="row-panels">
+      <div class="rpanel active" data-rpanel="overview">${overview}</div>
+      <div class="rpanel" data-rpanel="tools">${toolsHtml}</div>
+      <div class="rpanel" data-rpanel="instructions"><div class="md" data-md-target>Loading…</div></div>
+      <div class="rpanel" data-rpanel="advanced">${advanced}${pubBtn}</div>
+    </div>`
+}
+
+function boardCard(b) {
+  return `<div class="row list-row board-row" id="row-${b.id}">
+    <div class="row-head" onclick="toggleRow('${b.id}', event)">
+      <div class="row-main">
+        <div class="row-name">${esc(b.name)}</div>
+        <div class="row-desc">${esc(b.description)}</div>
+      </div>
+      <div class="row-side">
+        <span class="status-chip chip-builtin">Workflow</span>
+      </div>
+      ${CHEVRON}
+    </div>
+    <div class="row-expand"><div class="row-expand-inner">${boardExpand(b)}</div></div>
+  </div>`
+}
+
+// Inline expandable content for a board (Overview / Definition tabs).
+function boardExpand(b) {
+  const overview = `
+    <div class="panel-h">Workflow</div>
+    <ul class="outcomes">${outcomes(b.description).map((o) => `<li><span class="chk">✓</span><span>${esc(o)}</span></li>`).join('')}</ul>
+    <div class="row-badges" data-board-stats style="margin-bottom:18px"><span class="tool-badge">Loading…</span></div>`
+  return `<div class="row-tabs">
+      <button class="rtab active" data-rtab="overview" onclick="switchRowTab('${b.id}','overview', event)">Overview</button>
+      <button class="rtab" data-rtab="definition" onclick="switchRowTab('${b.id}','definition', event)">Definition</button>
+    </div>
+    <div class="row-panels">
+      <div class="rpanel active" data-rpanel="overview">${overview}</div>
+      <div class="rpanel" data-rpanel="definition">
+        <div style="margin-bottom:10px"><button class="btn btn-outline btn-sm" onclick='copyJson(this); event.stopPropagation();'>Copy JSON</button></div>
+        <div class="json" data-json-target>Loading…</div>
+      </div>
+    </div>`
+}
+
+// Accordion toggle: expand the clicked row, collapsing any other open one.
+function toggleRow(id, ev) {
+  if (ev) ev.stopPropagation()
+  const row = document.getElementById('row-' + id)
+  if (!row) return
+  const isOpen = row.classList.contains('expanded')
+  document.querySelectorAll('.list-row.expanded').forEach((r) => { if (r !== row) r.classList.remove('expanded') })
+  if (isOpen) { row.classList.remove('expanded'); return }
+  row.classList.add('expanded')
+  // Lazily load the heavy content on first expand.
+  if (row.classList.contains('board-row')) loadBoardDef(id)
+  else loadSkillMd(id)
+}
+
+// Per-row tab switch — re-triggers the slide animation each time.
+function switchRowTab(id, name, ev) {
+  if (ev) ev.stopPropagation()
+  const row = document.getElementById('row-' + id)
+  if (!row) return
+  row.querySelectorAll('.rtab').forEach((t) => t.classList.toggle('active', t.dataset.rtab === name))
+  row.querySelectorAll('.rpanel').forEach((p) => {
+    const on = p.dataset.rpanel === name
+    p.classList.toggle('active', on)
+    p.classList.remove('mpanel-anim')
+    if (on) { void p.offsetWidth; p.classList.add('mpanel-anim') }
+  })
+}
+
+// Lazy-fetch + cache a skill's SKILL.md markdown into its Instructions tab.
+const mdCache = {}
+async function loadSkillMd(id) {
+  const row = document.getElementById('row-' + id)
+  if (!row) return
+  const target = row.querySelector('[data-md-target]')
+  if (!target || target.dataset.loaded) return
+  if (mdCache[id] != null) { target.innerHTML = marked.parse(mdCache[id] || ''); target.dataset.loaded = '1'; return }
+  try {
+    const r = await fetch('/api/skills/' + id)
+    const { skillMd } = await r.json()
+    mdCache[id] = skillMd || ''
+    target.innerHTML = marked.parse(mdCache[id])
+    target.dataset.loaded = '1'
+  } catch (e) {
+    target.innerHTML = '<p style="color:var(--text-muted)">Could not load instructions.</p>'
+  }
+}
+
+// Lazy-fetch + cache a board's definition JSON + stat badges.
+const boardCache = {}
+async function loadBoardDef(id) {
+  const row = document.getElementById('row-' + id)
+  if (!row) return
+  const jsonEl = row.querySelector('[data-json-target]')
+  if (!jsonEl || jsonEl.dataset.loaded) return
+  let definition = boardCache[id]
+  if (definition == null) {
+    try {
+      const r = await fetch('/api/boards/' + id)
+      const j = await r.json()
+      definition = j.definition
+      boardCache[id] = definition
+    } catch (e) { jsonEl.textContent = 'Could not load definition.'; return }
+  }
+  jsonEl.textContent = JSON.stringify(definition, null, 2)
+  jsonEl.dataset.loaded = '1'
+  const cols = (definition && definition.columns) ? definition.columns.length : 0
+  const states = (definition && definition.states) ? definition.states.length : 0
+  const stats = row.querySelector('[data-board-stats]')
+  if (stats) stats.innerHTML = `<span class="tool-badge">🧭 ${cols} columns</span><span class="tool-badge">⚙️ ${states} states</span>`
+}
+
+// C5. Copy Command — press scale, green check, reset.
+function copyCommand(name, btn) {
+  const cmd = '/' + name;
+  navigator.clipboard.writeText(cmd).then(() => {
+    toast('Copied ' + cmd + ' — paste into any Duet chat to invoke');
+    if (btn) {
+      const orig = btn.innerHTML;
+      btn.classList.add('btn-press');
+      setTimeout(() => btn.classList.remove('btn-press'), 100);
+      btn.innerHTML = '✓ Copied ' + cmd;
+      btn.classList.add('btn-copy-success');
+      btn.disabled = true;
+      setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('btn-copy-success'); btn.disabled = false; }, 1500);
+    }
+  }).catch(() => {
+    toast(cmd + ' — paste this into any Duet chat');
+  });
+}
+
+function copyJson(btn) {
+  const panel = btn.closest('.rpanel') || document
+  const el = panel.querySelector('.json')
+  const text = el ? el.textContent : ''
+  navigator.clipboard.writeText(text).then(() => { btn.textContent = 'Copied'; setTimeout(() => btn.textContent = 'Copy JSON', 1500) })
+}
+
+async function publishSkill(id, ev) {
+  if (ev) ev.stopPropagation()
+  const btn = ev && ev.target
+  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Publishing' }
+  try {
+    const r = await fetch('/api/skills/' + id + '/publish', { method: 'POST' })
+    const j = await r.json()
+    if (!r.ok) throw new Error(j.error || 'publish failed')
+    toast('Published → ' + j.installedPath)
+    await load()
+  } catch (e) {
+    toast('Error: ' + e.message)
+    if (btn) { btn.disabled = false; btn.textContent = 'Publish' }
+  }
+}
+
+$('#scanBtn').addEventListener('click', async () => {
+  const b = $('#scanBtn'); b.disabled = true; b.classList.add('scanning'); b.innerHTML = '<span class="spin-icon ico">↻</span> Scanning'
+  try {
+    const r = await fetch('/api/scan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' })
+    const j = await r.json()
+    if (!r.ok) throw new Error(j.error || 'scan failed')
+    toast(`Scan done · ${j.counts.skills} skills, ${j.counts.boards} boards`)
+    await load()
+  } catch (e) { toast('Scan error: ' + e.message) }
+  finally { b.disabled = false; b.classList.remove('scanning'); b.innerHTML = '<span class="ico spin-icon">↻</span> Run Scanner' }
+})
+
+document.querySelectorAll('.tab').forEach((t) => t.addEventListener('click', () => {
+  document.querySelectorAll('.tab').forEach((x) => x.classList.remove('active'))
+  t.classList.add('active'); activeTab = t.dataset.tab; render()
+}))
+$('#search').addEventListener('input', render)
+// Esc collapses any expanded card.
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') document.querySelectorAll('.list-row.expanded').forEach((r) => r.classList.remove('expanded')) })
+
+load()
+</script>
+</body>
+</html>
