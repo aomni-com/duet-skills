@@ -415,7 +415,7 @@ html[data-theme="dark"] .header-actions .btn-outline { background: rgba(255,255,
       <div class="header-left">
         <div class="title-row">
           <h1>Skills &amp; Boards Library</h1>
-          <span class="ws-badge"><span class="glyph">✦</span> team-aomni-com</span>
+          <span class="ws-badge"><span class="glyph">✦</span> Workspace library</span>
         </div>
         <div class="tagline">Reusable agent skills &amp; board workflows discovered across your workspace — view, customize, and publish them to your agent.</div>
       </div>
@@ -499,30 +499,12 @@ function toolDepDescription(tool) {
 function isComposio(s) { return String(s.source||'').startsWith('composio:') }
 function isInstalled(s) { return String(s.source||'').startsWith('installed:') }
 
-// A2. Human-readable display names for composio (connected-tool) skills.
-const COMPOSIO_NAMES = {
-  'composio:gmail': 'Gmail Triage',
-  'composio:google_search_console': 'Search Console Report',
-  'composio:slack': 'Slack Notify',
-  'composio:stripe': 'Stripe Lookup',
-};
-
-// A1. Human-readable descriptions for composio skills (replace raw SKILL.md text).
-const COMPOSIO_DESCRIPTIONS = {
-  'composio:gmail': 'Automatically sort, label, archive, and prioritize your inbox — batch-processed, zero manual effort.',
-  'composio:google_search_console': 'Pull top queries, impressions, clicks, and coverage issues into a clean weekly report.',
-  'composio:slack': 'Post formatted messages and alerts to any Slack channel from your agent or workflow.',
-  'composio:stripe': 'Look up customers, payments, subscriptions, and invoices without opening the Stripe dashboard.',
-};
-
-// Display name for a skill, preferring the curated composio name.
 function skillDisplayName(s) {
-  return COMPOSIO_NAMES[s.source] || titleCase(s.name)
+  return titleCase(s.name)
 }
 
-// Display description, preferring the curated composio description.
 function skillDescription(s) {
-  return COMPOSIO_DESCRIPTIONS[s.source] || s.description
+  return s.description
 }
 
 // Derive 2-3 outcome bullets from a skill description.
@@ -544,7 +526,6 @@ function render() {
     grid.innerHTML = `<div class="list">${items.map(boardCard).join('')}</div>`
     return
   }
-  // Skills tab: split into Custom Skills (composio:*) and Out of the Box (installed:*)
   const skills = (DATA.skills || []).filter((it) => matchesQuery(it, q))
   const custom = skills.filter((s) => isComposio(s))
   const builtin = skills.filter((s) => isInstalled(s))
@@ -584,15 +565,12 @@ function renderEmpty(kind) {
     </div>`
 }
 
-// Status chip shown top-right of a skill row. Two-way: Draft vs Available.
 function statusChip(s) {
   if (s.status !== 'published') return '<span class="status-chip chip-draft">Draft</span>'
   return '<span class="status-chip chip-connected">Available</span>'
 }
 
-// TOOLS / dependencies for a skill (server-computed, falls back gracefully).
 function skillTools(s) { return Array.isArray(s.tools) ? s.tools : [] }
-// TYPE for a skill (server-computed): Integration / Duet skill / Custom.
 function skillType(s) {
   if (s.type) return s.type
   if (isComposio(s)) return 'Integration'
@@ -600,17 +578,14 @@ function skillType(s) {
   return 'Custom'
 }
 
-// Dependency pill(s): the inferred tools, or a muted "No dependencies".
 function toolBadges(s) {
   const tools = skillTools(s)
   if (!tools.length) return `<div class="row-badges"><span class="tool-badge tb-none">No dependencies</span></div>`
   return `<div class="row-badges">${tools.map((t) => `<span class="tool-badge tb-dep">${esc(t)}</span>`).join('')}</div>`
 }
 
-// Chevron indicator shown at the right of an expandable row head.
 const CHEVRON = '<div class="row-chevron"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7.5l5 5 5-5"/></svg></div>'
 
-// A5. Card head shows only Copy — Publish lives in the inline Advanced tab.
 function skillCard(s) {
   const cmdClass = isComposio(s) ? 'row-cmd cmd-brand' : 'row-cmd'
   return `<div class="row list-row" id="row-${s.id}">
@@ -635,14 +610,12 @@ function skillCard(s) {
   </div>`
 }
 
-// Inline expandable content for a skill (same tabs the modal used).
 function skillExpand(s) {
   const overviewDesc = skillDescription(s)
   const overview = `
     <div class="panel-h">What you'll achieve</div>
     <ul class="outcomes">${outcomes(overviewDesc).map((o) => `<li><span class="chk">✓</span><span>${esc(o)}</span></li>`).join('')}</ul>`
 
-  // Tools tab: TYPE line + inferred dependency breakdown.
   const tools = skillTools(s)
   const typeRow = `<table class="meta-table" style="margin-bottom:14px">
     <tr><td>Type</td><td style="font-family:var(--font-sans)">${esc(skillType(s))}</td></tr>
@@ -702,7 +675,6 @@ function boardCard(b) {
   </div>`
 }
 
-// Inline expandable content for a board (Overview / Definition tabs).
 function boardExpand(b) {
   const overview = `
     <div class="panel-h">Workflow</div>
@@ -721,7 +693,6 @@ function boardExpand(b) {
     </div>`
 }
 
-// Accordion toggle: expand the clicked row, collapsing any other open one.
 function toggleRow(id, ev) {
   if (ev) ev.stopPropagation()
   const row = document.getElementById('row-' + id)
@@ -730,12 +701,10 @@ function toggleRow(id, ev) {
   document.querySelectorAll('.list-row.expanded').forEach((r) => { if (r !== row) r.classList.remove('expanded') })
   if (isOpen) { row.classList.remove('expanded'); return }
   row.classList.add('expanded')
-  // Lazily load the heavy content on first expand.
   if (row.classList.contains('board-row')) loadBoardDef(id)
   else loadSkillMd(id)
 }
 
-// Per-row tab switch — re-triggers the slide animation each time.
 function switchRowTab(id, name, ev) {
   if (ev) ev.stopPropagation()
   const row = document.getElementById('row-' + id)
@@ -749,7 +718,6 @@ function switchRowTab(id, name, ev) {
   })
 }
 
-// Lazy-fetch + cache a skill's SKILL.md markdown into its Instructions tab.
 const mdCache = {}
 async function loadSkillMd(id) {
   const row = document.getElementById('row-' + id)
@@ -768,7 +736,6 @@ async function loadSkillMd(id) {
   }
 }
 
-// Lazy-fetch + cache a board's definition JSON + stat badges.
 const boardCache = {}
 async function loadBoardDef(id) {
   const row = document.getElementById('row-' + id)
@@ -792,7 +759,6 @@ async function loadBoardDef(id) {
   if (stats) stats.innerHTML = `<span class="tool-badge">🧭 ${cols} columns</span><span class="tool-badge">⚙️ ${states} states</span>`
 }
 
-// C5. Copy Command — press scale, green check, reset.
 function copyCommand(name, btn) {
   const cmd = '/' + name;
   navigator.clipboard.writeText(cmd).then(() => {
@@ -851,7 +817,6 @@ document.querySelectorAll('.tab').forEach((t) => t.addEventListener('click', () 
   t.classList.add('active'); activeTab = t.dataset.tab; render()
 }))
 $('#search').addEventListener('input', render)
-// Esc collapses any expanded card.
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') document.querySelectorAll('.list-row.expanded').forEach((r) => r.classList.remove('expanded')) })
 
 load()

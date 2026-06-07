@@ -1,20 +1,7 @@
 'use strict'
-// workspace.js — Resolve THIS workspace's public app URL dynamically, instead
-// of hardcoding an org-specific subdomain.
-//
-// How Duet public app URLs are formed (see the build-apps skill): an app with a
-// `slug` is served at  https://{slug}--{orgSlug}.duet.so . The orgSlug is the
-// organization's URL slug, which the Duet REST API exposes verbatim at
-//   GET {APP_URL}/api/v1/organization  ->  { data: { slug } }
-// For this workspace that slug is e.g. `team-aomni-com`, so the library app
-// (slug `library`) lives at https://library--team-aomni-com.duet.so .
-//
-// Resolution order:
-//   1. PUBLIC_URL / LIBRARY_PUBLIC_URL env override (explicit wins).
-//   2. GET /api/v1/organization -> compose https://{appSlug}--{slug}.duet.so .
-//   3. null (caller should fall back to a localhost health check).
-//
-// appSlug defaults to `library`, overridable via LIBRARY_APP_SLUG.
+// Duet public apps are served at https://{appSlug}--{orgSlug}.{domain}.
+// Resolve orgSlug from the authenticated workspace when possible so the skill
+// remains portable across workspaces, with env overrides for local/testing use.
 
 const APP_BASE = process.env.DUET_APP_BASE_URL || process.env.APP_URL || 'https://duet.so'
 const API_KEY = process.env.DUET_API_KEY

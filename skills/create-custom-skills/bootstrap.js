@@ -17,7 +17,7 @@ const seed = require('./seed.js')
 const scan = require('./scan.js')
 const propose = require('./propose-skills.js')
 const lib = require('./lib.js')
-const { resolvePublicUrl } = require('./workspace.js')
+const { resolvePublicUrl, appSlug } = require('./workspace.js')
 
 const SKILL_DIR = __dirname
 const APP_TEMPLATE_DIR = path.join(SKILL_DIR, 'app')
@@ -162,7 +162,8 @@ function ensurePublicConfig() {
     cfg = { version: 1, apps: [] }
   }
   const apps = Array.isArray(cfg.apps) ? cfg.apps : []
-  const existing = apps.find((a) => a.slug === 'library')
+  const slug = appSlug()
+  const existing = apps.find((a) => a.slug === slug)
   if (existing) return { registered: false, reason: 'already-registered' }
 
   const channelId = process.env.LIBRARY_CHANNEL_ID
@@ -174,7 +175,7 @@ function ensurePublicConfig() {
     name: 'Skills & Boards Library',
     channelId,
     path: '/',
-    slug: 'library',
+    slug,
     icon: 'public/skills-library/icon.png',
     type: 'service',
     command: `PORT=${PORT} node server.js`,
